@@ -1,0 +1,84 @@
+version: '3.3'
+services:
+  master-database:
+    image: mariadb:master
+    restart: always
+    container_name: master-database
+    command: --default-authentication-plugin=mysql_native_password
+    build: 
+      context: .
+      dockerfile: ./master.Dockerfile
+    environment:
+      MARIADB_ROOT_PASSWORD: Lif3T@b
+    depends_on:
+      - slave-database-1
+      - slave-database-2
+      - master-database-2
+  slave-database-1:
+    image: mariadb:slave-1
+    restart: always
+    container_name: slave-database-1
+    command: --default-authentication-plugin=mysql_native_password
+    build:
+      context: .
+      dockerfile: ./slave-1.Dockerfile
+    environment:
+      MARIADB_ROOT_PASSWORD: Lif3T@b
+      
+  slave-database-2:
+    image: mariadb:slave-2
+    restart: always
+    container_name: slave-database-2
+    command: --default-authentication-plugin=mysql_native_password
+    build: 
+      context: .
+      dockerfile: ./slave-2.Dockerfile
+    environment:
+      MARIADB_ROOT_PASSWORD: Lif3T@b
+  maxscale-proxy:
+    image: mariadb/maxscale:22.08
+    restart: always
+    ports:
+      - 8989:8989
+      - 3306:3306
+    depends_on:
+      - master-database
+      - master-database-2
+      - slave-database-1
+      - slave-database-2
+      - slave-database-3
+      - slave-database-4
+  master-database-2:
+      image: mariadb:master-2
+      restart: always
+      container_name: master-database-2
+      command: --default-authentication-plugin=mysql_native_password
+      build: 
+        context: .
+        dockerfile: ./master-2.Dockerfile
+      environment:
+        MARIADB_ROOT_PASSWORD: Lif3T@b
+      depends_on:
+        - slave-database-3
+        - slave-database-4
+  slave-database-3:
+    image: mariadb:slave-1
+    restart: always
+    container_name: slave-database-3
+    command: --default-authentication-plugin=mysql_native_password
+    build:
+      context: .
+      dockerfile: ./slave-1.Dockerfile
+    environment:
+      MARIADB_ROOT_PASSWORD: Lif3T@b
+
+  slave-database-4:
+    image: mariadb:slave-2
+    restart: always
+    container_name: slave-database-4
+    command: --default-authentication-plugin=mysql_native_password
+    build:
+      context: .
+      dockerfile: ./slave-2.Dockerfile
+    environment:
+      MARIADB_ROOT_PASSWORD: Lif3T@b

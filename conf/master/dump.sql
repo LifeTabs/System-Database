@@ -1,0 +1,9 @@
+CREATE USER 'replication_user'@'%' IDENTIFIED BY 'Lif3T@b';
+GRANT REPLICATION SLAVE ON *.* TO 'replication_user'@'%';
+
+FLUSH TABLES WITH READ LOCK;
+
+SHOW MASTER STATUS;
+
+
+UNLOCK TABLES;
